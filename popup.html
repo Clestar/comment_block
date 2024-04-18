@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      width: 300px;
+      height: 350px;
+      background-color: #E2E2E2;
+    }
+    .title_text {
+      width: 268px;
+      height: 50px;
+      background-color: white;
+      margin:16px;
+    }
+    .setting_wrap {
+      width: 268px;
+      height: 180px;
+      background-color: white;
+      margin:16px;
+    }
+    .btn_wrap{
+      width: 268px;
+      height: 76px;
+      background-color: white;
+      margin:16px;
+      margin-bottom: 0px;
+      display: flex;
+    }
+    .slider_wrap{
+      width: 248px;
+      height: 76px;
+      margin:16px;
+      display:flex;
+      flex-direction: column;
+    }
+    .checkbox_container{
+      width: 250px;
+      height: 80px;
+      margin: 10px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .checkbox_wrap{
+      width: 50px;
+      height: 40px;
+      flex-basis: auto;
+    }
+    #option_slider{
+      margin:auto;
+    }
+    .logo{
+      height:50px;
+      width: 30px;
+      vertical-align: middle;
+    }
+    #option_btn{
+      height:30px;
+      width:70px;
+      margin:auto;
+    }
+  </style>
+</head>
+<body></body>
+  <div class = "title_text">
+    <div class = "logo">
+      <img src="icon.png" display:block; height="100%";width="auto">
+    </div>
+  </div>
+  <div class = "setting_wrap">
+    <div class = "slider_wrap">
+      <input type="range" id = "option_slider" min="1" max="100" value="50">
+      <p>Value: <span id="value"></span></p>
+    </div>
+    <div class = "checkbox_container">
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "0">
+        <label for = "0">전체</label> 
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "1">
+        <label for = "1">출신</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "2">
+        <label for = "2">외모</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "3">
+        <label for = "3">정치</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "4">
+        <label for = "4">혐오</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "5">
+        <label for = "5">연령</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "6">
+        <label for = "6">성</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "7">
+        <label for = "7">인종</label>
+      </div>
+      <div class = "checkbox_wrap">
+        <input type="checkbox" id = "8">
+        <label for = "8">종교</label>
+      </div>
+    </div>
+  </div>
+  <div class = "btn_wrap">
+    <input type = "button" value = "설정 변경" id = "option_btn">
+  </div>
+<script src="popup.js"></script>
+</body>
+</html>
