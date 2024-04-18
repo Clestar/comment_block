@@ -7,6 +7,12 @@
     "permissions": [
       "storage"
     ],
+    "content_scripts": [
+      {
+        "matches": ["https://gall.dcinside.com/*"],
+        "js": ["scripts/dcinside.js"]
+      }
+    ],
     "action": {
       "default_popup": "popup.html",
       "default_icon": "icon.png"
