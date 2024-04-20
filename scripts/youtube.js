@@ -1,36 +1,44 @@
 function comment_extract(){
-    var elements = document.querySelectorAll('li[id^="comment_li_"]');
-    elements.forEach(function(element) {
-        var pElement = element.querySelector("p");
-        if(pElement != null){
-            console.log(pElement.textContent);
-            var reply="reply_list"+element.id.substr(10);
-            var re_Element = document.querySelector("#"+reply);
-            if(re_Element!=null){
-                re_Element = re_Element.querySelectorAll("li");
-                re_Element.forEach(function(re_element) {
-                    var re_pElement = re_element.querySelectorAll("p");
-                    if(re_pElement !=null){
-                        re_pElement.forEach(function(re){
-                            console.log("\t"+re.textContent);
-                        })
-                        
-                    }
-                });
-            }
-        }
-    });
+    var commentList = document.getElementsByTagName('ytd-comment-thread-renderer');
+    for( var i = 0; i < commentList.length; i++){
+      var commentString = commentList[i].querySelector('#content-text').innerText;
+      console.log(commentString);
+    }
 }
 //comment_extract();
-const targetNode = document.querySelector("div#primary");
 function callback(mutationList, observer) {
-    console.log(mutationList);
+    for (const mutation of mutationList) {
+        if (mutation.type === "childList" && mutation.target.tag==="ytd-comment-thread-renderer") {
+          //comment_extract();
+          console.log(mutation.target);
+        }
+    }
+    
 }
-const observerOptions = {
-  chileList: true,
-  attributes: true,
-  subtree: true,
+window.onload=function(){
+    setTimeout(start,3000);
 };
+document.querySelector("#expander-contents.style-scope.ytd_comment-replies-renderer");
+function start(){
+    console.log("start");
+    var target_xpath = "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-comments/ytd-item-section-renderer/div[3]"
+    var target = document.evaluate(
+        target_xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue;
+    const observerOptions = {
+        childList: true,
+        attributes: true,
+        subtree: true,
+    };
+    console.log(target);
+    
+    const observer = new MutationObserver(callback);
+    observer.observe(target, observerOptions);
+}
 
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, observerOptions);
+
+

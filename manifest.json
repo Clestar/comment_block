@@ -11,6 +11,10 @@
       {
         "matches": ["https://gall.dcinside.com/*"],
         "js": ["scripts/dcinside.js"]
+      },
+      {
+        "matches": ["https://*.youtube.com/*"],
+        "js":["scripts/youtube.js"]
       }
     ],
     "action": {
