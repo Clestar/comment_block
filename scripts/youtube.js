@@ -16,8 +16,14 @@ function callback(mutationList, observer) {
     
 }
 window.onload=function(){
-    setTimeout(start,3000);
+    comment_extract();
 };
+
+chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+    comment_extract();
+});
+///comment container observer
+/*
 document.querySelector("#expander-contents.style-scope.ytd_comment-replies-renderer");
 function start(){
     console.log("start");
@@ -38,7 +44,4 @@ function start(){
     
     const observer = new MutationObserver(callback);
     observer.observe(target, observerOptions);
-}
-
-
-
+}*/

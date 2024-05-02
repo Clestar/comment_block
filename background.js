@@ -17,14 +17,13 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
         return true;
     }
 });
-tellContentScriptToReload = () => {
-    console.log("hello world")
-}
   
 const networkFilters = {
     urls: ["https://*.youtube.com/*", "https://www.saramin.co.kr/*"],
 };
-chrome.webRequest.onCompleted.addListener((details) =>{
-    console.log("hi");
-}, networkFilters);
-    
+chrome.webRequest.onCompleted.addListener(sendMessageToActiveTab, {urls:["https://www.youtube.com/youtubei/v1/next?prettyPrint=false"]});
+
+async function sendMessageToActiveTab(message) {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    chrome.tabs.sendMessage(tab.id, message);
+}
