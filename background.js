@@ -17,3 +17,14 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
         return true;
     }
 });
+tellContentScriptToReload = () => {
+    console.log("hello world")
+}
+  
+const networkFilters = {
+    urls: ["https://*.youtube.com/*", "https://www.saramin.co.kr/*"],
+};
+chrome.webRequest.onCompleted.addListener((details) =>{
+    console.log("hi");
+}, networkFilters);
+    
