@@ -18,7 +18,7 @@
         "js": ["scripts/youtube.js"]
       },
       {
-        "matches": ["https://n.news.naver.com/mnews/article/*"],
+        "matches": ["*://n.news.naver.com/mnews/article/*"],
         "js": ["scripts/navernews.js"]
       }
     ],
