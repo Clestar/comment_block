@@ -15,6 +15,9 @@
       height: 50px;
       background-color: white;
       margin:16px;
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .setting_wrap {
       width: 268px;
@@ -31,7 +34,7 @@
       display: flex;
     }
     .slider_wrap{
-      width: 248px;
+      width: 236px;
       height: 76px;
       margin:16px;
       display:flex;
@@ -54,26 +57,47 @@
     }
     .logo{
       height:50px;
-      width: 30px;
+      width: 50px;
       vertical-align: middle;
+    }
+    .switch{
+      height:34px;
+      width:70px;
+      margin: 5px;
+      vertical-align: middle;
+    }
+    .slider_value{
+      text-align: center;
     }
     #option_btn{
       height:30px;
       width:70px;
       margin:auto;
     }
+    .toggle_switch { display: inline-block; position: relative; width: 70px; height: 34px; } 
+    .toggle_switch input[type="checkbox"] { overflow: hidden; position: absolute; width: 1px; height: 1px; margin: -1px; font-size: initial; clip: rect(0 0 0 0); } 
+    .toggle_switch .slider { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: #ccc; border-radius: 34px; cursor: pointer; transition: 0.4s; } 
+    .toggle_switch input[type="checkbox"]:checked + .slider { background-color: #007bff; } 
+    .toggle_switch .slider::before { content: ""; position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; background-color: #fff; border-radius: 50%; transition: 0.4s; } 
+    .toggle_switch input[type="checkbox"]:checked + .slider::before { transform:translateX(36px); } 
   </style>
 </head>
-<body></body>
+<body>
   <div class = "title_text">
     <div class = "logo">
       <img src="icon.png" display:block; height="100%";width="auto">
+    </div>
+    <div class = "switch">
+      <label class="toggle_switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
   <div class = "setting_wrap">
     <div class = "slider_wrap">
       <input type="range" id = "option_slider" min="1" max="100" value="50">
-      <p>Value: <span id="value"></span></p>
+      <p class = "slider_value">Value: <span id="value"></span></p>
     </div>
     <div class = "checkbox_container">
       <div class = "checkbox_wrap">

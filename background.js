@@ -19,10 +19,15 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
 });
   
 const networkFilters = {
-    urls: ["https://*.youtube.com/*", "https://www.saramin.co.kr/*"],
+    urls: ["https://*.youtube.com/*"],
 };
+//https://apis.naver.com/commentBox/cbox/web_naver_list_jsonp.json?
+chrome.webRequest.onCompleted.addListener(tmp, {urls:["https://apis.naver.com/commentBox/cbox/web_naver_list_*"]});
 chrome.webRequest.onCompleted.addListener(sendMessageToActiveTab, {urls:["https://www.youtube.com/youtubei/v1/next?prettyPrint=false"]});
-
+async function tmp(message) {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    chrome.tabs.sendMessage(tab.id, message);
+}
 async function sendMessageToActiveTab(message) {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     chrome.tabs.sendMessage(tab.id, message);

@@ -16,10 +16,16 @@
       {
         "matches": ["https://*.youtube.com/*"],
         "js": ["scripts/youtube.js"]
+      },
+      {
+        "matches": ["https://n.news.naver.com/mnews/article/*"],
+        "js": ["scripts/navernews.js"]
       }
     ],
     "host_permissions":[
-      "https://*.youtube.com/*"
+      "https://*.youtube.com/*",
+      "https://n.news.naver.com/mnews/article/*",
+      "https://apis.naver.com/commentBox/cbox/*"
     ],
     "action": {
       "default_popup": "popup.html",
