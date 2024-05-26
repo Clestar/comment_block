@@ -4,7 +4,7 @@ function setStorage(key, value) {
     chrome.storage.local.set(setObj);
 }
 function getStorage(){
-    chrome.storage.local.get(setObj);
+    chrome.storage.local.get("option");
 }
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
     if(message.action === "save_options"){
@@ -14,10 +14,24 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
         chrome.storage.local.get("option", function(data) {
             sendResponse({ data: data });
           });
-        return true;
+          return true;
+    }
+    if(message.action === "initialize_options"){
+        var option_data = { 
+            on : true,  
+            intensity : 50,
+            "성차별" : true,
+            "인종/국적/지역" : true,
+            "연령" : true,
+            "종교" : true,
+            "악플/욕설" : true,
+            "정치/기타혐오" : true,
+        };
+        setStorage("option",option_data);
+        sendResponse(option_data);
     }
 });
-  
+        
 const networkFilters = {
     urls: ["https://*.youtube.com/*"],
 };
