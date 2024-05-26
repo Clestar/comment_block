@@ -1,47 +1,42 @@
+var commentCount = 0;
+var commentList=[];
 function comment_extract(){
-    var commentList = document.getElementsByTagName('ytd-comment-thread-renderer');
-    for( var i = 0; i < commentList.length; i++){
-      var commentString = commentList[i].querySelector('#content-text').innerText;
-      console.log(commentString);
+    var youtubecommentList = document.getElementsByTagName('ytd-comment-thread-renderer');
+    for( var i = 0; i < youtubecommentList.length; i++){
+        if(youtubecommentList[i].classList.contains("extracted")) continue;
+
+        var commentString = youtubecommentList[i].querySelector('#content-text').innerText;
+        youtubecommentList[i].classList.add("extracted");
+        commentList.push({
+            "id":"tmp",
+            "text": commentString
+        })
+        commentCount++;
     }
+    console.log(commentList);
+    send_message();
 }
-//comment_extract();
-function callback(mutationList, observer) {
-    for (const mutation of mutationList) {
-        if (mutation.type === "childList" && mutation.target.tag==="ytd-comment-thread-renderer") {
-          //comment_extract();
-          console.log(mutation.target);
-        }
-    }
-    
-}
-window.onload=function(){
-    comment_extract();
-};
 
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
-    comment_extract();
+    const intervalId = setInterval(() => {
+        commentCount=0;
+        comment_extract();
+        if (commentCount > 0) {
+            clearInterval(intervalId);
+        }
+    }, 1000);
 });
-///comment container observer
-/*
-document.querySelector("#expander-contents.style-scope.ytd_comment-replies-renderer");
-function start(){
-    console.log("start");
-    var target_xpath = "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-comments/ytd-item-section-renderer/div[3]"
-    var target = document.evaluate(
-        target_xpath,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-    ).singleNodeValue;
-    const observerOptions = {
-        childList: true,
-        attributes: true,
-        subtree: true,
-    };
-    console.log(target);
-    
-    const observer = new MutationObserver(callback);
-    observer.observe(target, observerOptions);
-}*/
+
+function send_message(){
+    fetch('https://project-march.inha.me/api/blind', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(commentList),
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error)); //throw된 error를 받아서 console에 출력
+}

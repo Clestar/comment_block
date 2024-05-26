@@ -9,7 +9,7 @@ function comment_extract(){
         var commentString = navercommentList[i].innerText;
         commentList.push({
             "id":"tmp",
-            "contents": commentString
+            "text": commentString
         })
         commentCount++;
     }
@@ -18,7 +18,7 @@ function comment_extract(){
 }
 
 function send_message(){
-    fetch('http://18.139.83.84:8080/api/blind', {
+    fetch('https://project-march.inha.me/api/blind', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
