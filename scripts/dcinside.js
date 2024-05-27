@@ -24,9 +24,6 @@ function comment_extract(){
 }
 chrome.storage.local.get("option", function(data) {
   option = data.option
-  for (var key in option) {
-    console.log(key + " : " + option[key]);
-}
 });
 function replace(data){
   var dccommentList = document.getElementsByClassName('usertxt');

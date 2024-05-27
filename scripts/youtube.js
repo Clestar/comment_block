@@ -1,12 +1,15 @@
 var commentCount = 0;
 var commentList=[];
+var option;
+//ytd-comment-view-model
+//yt-core-attributed-string
+
 function comment_extract(){
-    var youtubecommentList = document.getElementsByTagName('ytd-comment-thread-renderer');
+  commentList=[];
+    var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
     for( var i = 0; i < youtubecommentList.length; i++){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
-
         var commentString = youtubecommentList[i].querySelector('#content-text').innerText;
-        youtubecommentList[i].classList.add("extracted");
         commentList.push({
             "id":"tmp",
             "text": commentString
@@ -14,7 +17,37 @@ function comment_extract(){
         commentCount++;
     }
     console.log(commentList);
-    send_message();
+    //send_message();
+    replace();
+}
+chrome.storage.local.get("option", function(data) {
+  option = data.option
+});
+function replace(){
+  var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
+  var json_idx=0;
+    for( var i = 0; i < youtubecommentList.length; i++){
+        if(youtubecommentList[i].classList.contains("extracted")) continue;
+        var youtubeText = youtubecommentList[i].querySelector('#content-text');
+        var origin_text = youtubeText.innerText;
+        youtubeText.setAttribute('data-origin-text',origin_text);
+        youtubeText.setAttribute('data-censored','true');
+        youtubeText.innerText = "검열된 댓글입니다"
+        //console.log(data[json_idx].labelPrediction);
+        json_idx++;
+        youtubeText.classList.add("extracted");
+        youtubeText.addEventListener("click", (e) => {
+          if(e.target.getAttribute('data-censored')==='true'){
+            e.target.innerText = e.target.getAttribute('data-origin-text');
+            e.target.setAttribute('data-censored','false');
+          }
+          else{
+            e.target.innerText = "검열된 댓글입니다";
+            e.target.setAttribute('data-censored','true');
+          }
+          
+      });
+    }
 }
 
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
