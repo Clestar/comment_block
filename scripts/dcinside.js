@@ -8,7 +8,7 @@ function comment_extract(){
         if(dccommentList[i].classList.contains("extracted")) continue;
         var commentString = dccommentList[i].innerText;
         commentList.push({
-            "id":"tmp",
+            "id":commentCount,
             "text": commentString
         })
         commentCount++;

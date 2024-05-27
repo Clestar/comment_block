@@ -20,6 +20,10 @@
       {
         "matches": ["*://n.news.naver.com/mnews/article/*"],
         "js": ["scripts/navernews.js"]
+      },
+      {
+        "matches": ["https://ppomppu.co.kr/zboard/view*"],
+        "js": ["scripts/ppomppu.js"]
       }
     ],
     "host_permissions":[

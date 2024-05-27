@@ -8,7 +8,7 @@ function comment_extract(){
         if(navercommentList[i].classList.contains("extracted")) continue;
         var commentString = navercommentList[i].innerText;
         commentList.push({
-            "id":"tmp",
+            "id":commentCount,
             "text": commentString
         })
         commentCount++;

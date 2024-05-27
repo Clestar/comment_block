@@ -11,7 +11,7 @@ function comment_extract(){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
         var commentString = youtubecommentList[i].querySelector('#content-text').innerText;
         commentList.push({
-            "id":"tmp",
+            "id":commentCount,
             "text": commentString
         })
         commentCount++;
