@@ -10,7 +10,7 @@
     ],
     "content_scripts": [
       {
-        "matches": ["https://gall.dcinside.com/board/view/*"],
+        "matches": ["https://gall.dcinside.com/*board/view/*"],
         "js": ["scripts/dcinside.js"]
       },
       {
@@ -25,7 +25,8 @@
     "host_permissions":[
       "https://*.youtube.com/*",
       "https://n.news.naver.com/mnews/article/*",
-      "https://apis.naver.com/commentBox/cbox/*"
+      "https://apis.naver.com/commentBox/cbox/*",
+      "https://gall.dcinside.com/board/comment/"
     ],
     "action": {
       "default_popup": "popup.html",

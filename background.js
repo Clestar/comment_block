@@ -31,18 +31,18 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
         sendResponse(option_data);
     }
 });
-        
-const networkFilters = {
-    urls: ["https://*.youtube.com/*"],
-};
-//https://apis.naver.com/commentBox/cbox/web_naver_list_jsonp.json?
-chrome.webRequest.onCompleted.addListener(tmp, {urls:["https://apis.naver.com/commentBox/cbox/web_naver_list_*"]});
-chrome.webRequest.onCompleted.addListener(sendMessageToActiveTab, {urls:["https://www.youtube.com/youtubei/v1/next?prettyPrint=false"]});
-async function tmp(message) {
+chrome.webRequest.onCompleted.addListener(sendNaver, {urls:["https://apis.naver.com/commentBox/cbox/web_naver_list_*"]});
+chrome.webRequest.onCompleted.addListener(sendDC, {urls:["https://gall.dcinside.com/board/comment/"]});
+chrome.webRequest.onCompleted.addListener(sendYoutube, {urls:["https://www.youtube.com/youtubei/v1/next?prettyPrint=false"]});
+async function sendNaver(message) {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     chrome.tabs.sendMessage(tab.id, message);
 }
-async function sendMessageToActiveTab(message) {
+async function sendDC(message) {
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    chrome.tabs.sendMessage(tab.id, message);
+}
+async function sendYoutube(message) {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     chrome.tabs.sendMessage(tab.id, message);
 }

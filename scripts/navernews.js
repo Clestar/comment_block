@@ -6,8 +6,6 @@ function comment_extract(){
     var navercommentList = document.getElementsByClassName('u_cbox_contents');
     for( var i = 0; i < navercommentList.length; i++){
         if(navercommentList[i].classList.contains("extracted")) continue;
-        
-        //navercommentList[i].classList.add("extracted");
         var commentString = navercommentList[i].innerText;
         commentList.push({
             "id":"tmp",

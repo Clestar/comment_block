@@ -1,72 +1,76 @@
-var commentList = [];
+var commentCount = 0;
+var commentList=[];
+var option;
 function comment_extract(){
-    var elements = document.querySelectorAll('li[id^="comment_li_"]');
-    var commentCount = 0;
-    elements.forEach(function(element) {
-        if(commentCount>20){
-            send_message();
-            commentCount=0;
+  commentList=[];
+    var dccommentList = document.getElementsByClassName('usertxt');
+    for( var i = 0; i < dccommentList.length; i++){
+        if(dccommentList[i].classList.contains("extracted")) continue;
+        var commentString = dccommentList[i].innerText;
+        commentList.push({
+            "id":"tmp",
+            "text": commentString
+        })
+        commentCount++;
+        if(commentCount==20){
+          console.log(commentList);
+          send_message();
+          commentCount=0;
+          commentList=[];
         }
-        var pElement = element.querySelector("p");
-        if(pElement != null){
-            commentCount++;
-            commentList.push({
-                "id":"tmp",
-                "text": pElement.textContent
-            })
-            console.log(pElement.textContent);
-            var reply="reply_list"+element.id.substr(10);
-            var re_Element = document.querySelector("#"+reply);
-            if(re_Element!=null){
-                re_Element = re_Element.querySelectorAll("li");
-                re_Element.forEach(function(re_element) {
-                    var re_pElement = re_element.querySelectorAll("p");
-                    if(re_pElement !=null){
-                        re_pElement.forEach(function(re){
-                            commentCount++;
-                            commentList.push({
-                                "id":"tmp",
-                                "text": re.textContent
-                            })
-                            console.log("\t"+re.textContent);
-                        })
-                        
-                    }
-                });
-            }
-        }
-    });
+    }
+    console.log(commentList);
     send_message();
 }
+chrome.storage.local.get("option", function(data) {
+  option = data.option
+  for (var key in option) {
+    console.log(key + " : " + option[key]);
+}
+});
+function replace(data){
+  var dccommentList = document.getElementsByClassName('usertxt');
+  var json_idx=0;
+    for( var i = 0; i < dccommentList.length; i++){
+        if(dccommentList[i].classList.contains("extracted")) continue;
+        var origin_text = dccommentList[i].innerText;
+        dccommentList[i].setAttribute('data-origin-text',origin_text);
+        dccommentList[i].setAttribute('data-censored','true');
+        dccommentList[i].innerText = "검열된 댓글입니다"
+        console.log(data[json_idx].labelPrediction);
+        json_idx++;
+        dccommentList[i].classList.add("extracted");
+        dccommentList[i].addEventListener("click", (e) => {
+          if(e.target.getAttribute('data-censored')==='true'){
+            e.target.innerText = e.target.getAttribute('data-origin-text');
+            e.target.setAttribute('data-censored','false');
+          }
+          else{
+            e.target.innerText = "검열된 댓글입니다";
+            e.target.setAttribute('data-censored','true');
+          }
+          
+      });
+    }
+}
 comment_extract();
-const targetNode = document.querySelector("div.view_comment");
-function callback(mutationList, observer) {
-    for (const mutation of mutationList) {
-        if (mutation.type === "attributes" && mutation.attributeName === "data-comment-cnt") {
-          comment_extract();
-        }
+chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+  const intervalId = setInterval(() => {
+      commentCount=0;
+      comment_extract();
+      if (commentCount > 0) {
+          clearInterval(intervalId);
       }
-}
+  }, 1000);
+});
 function send_message(){
-    fetch('https://project-march.inha.me/api/blind', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify(commentList),
-    })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.log(error)); //throw된 error를 받아서 console에 출력
+  fetch('https://project-march.inha.me/api/blind', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify(commentList),
+  })
+  .then((response) => response.json())
+  .then((data) => replace(data));
 }
-const observerOptions = {
- 
-  attributes: true,
-
-  // false를 지정하거나 아예 생략하여 부모 노드의 변경만 감지
-  subtree: true,
-};
-
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, observerOptions);
