@@ -18,12 +18,12 @@
         "js": ["scripts/youtube.js"]
       },
       {
-        "matches": ["*://n.news.naver.com/mnews/article/*"],
+        "matches": ["https://n.news.naver.com/mnews/article/*"],
         "js": ["scripts/navernews.js"]
       },
       {
-        "matches": ["https://ppomppu.co.kr/zboard/view*"],
-        "js": ["scripts/ppomppu.js"]
+        "matches": ["https://instiz.net/*"],
+        "js": ["scripts/instiz.js"]
       }
     ],
     "host_permissions":[
