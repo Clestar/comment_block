@@ -45,7 +45,7 @@ total_check.addEventListener("click", () => {
 var option_btn = document.getElementById("option_btn");
 option_btn.addEventListener("click", () => {
     var option_data = { 
-        on : toggle.checked,
+        on : on.checked,
         intensity : slider.value,
         "성차별" : gender_check.checked,
         "인종/국적/지역" : origin_check.checked,
