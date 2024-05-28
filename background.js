@@ -31,11 +31,12 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
         sendResponse(option_data);
     }
 });
-chrome.webRequest.onCompleted.addListener(sendPpomppu, {urls:["https://ppomppu.co.kr/zboard/comment.php?*"]});
+//https://theqoo.net/modules/board/skins/sketchbook5_ajax/ejs/comment.ejs?version=13
+chrome.webRequest.onCompleted.addListener(sendInstiz, {urls:["https://ppomppu.co.kr/zboard/comment.php?*"]});
 chrome.webRequest.onCompleted.addListener(sendNaver, {urls:["https://apis.naver.com/commentBox/cbox/web_naver_list_*"]});
 chrome.webRequest.onCompleted.addListener(sendDC, {urls:["https://gall.dcinside.com/board/comment/"]});
 chrome.webRequest.onCompleted.addListener(sendYoutube, {urls:["https://www.youtube.com/youtubei/v1/next?prettyPrint=false"]});
-async function sendPpomppu(message) {
+async function sendInstiz(message) {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     chrome.tabs.sendMessage(tab.id, message);
 }

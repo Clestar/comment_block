@@ -22,7 +22,7 @@
         "js": ["scripts/navernews.js"]
       },
       {
-        "matches": ["https://instiz.net/*"],
+        "matches": ["https://www.instiz.net/*/*"],
         "js": ["scripts/instiz.js"]
       }
     ],

@@ -12,12 +12,14 @@ function comment_extract(){
             "text": commentString
         })
         commentCount++;
+        /*
         if(commentCount==20){
           console.log(commentList);
           send_message();
           commentCount=0;
           commentList=[];
         }
+        */
     }
     console.log(commentList);
     send_message();
@@ -27,27 +29,41 @@ chrome.storage.local.get("option", function(data) {
 });
 function replace(data){
   var dccommentList = document.getElementsByClassName('usertxt');
-  var json_idx=0;
-    for( var i = 0; i < dccommentList.length; i++){
-        if(dccommentList[i].classList.contains("extracted")) continue;
-        var origin_text = dccommentList[i].innerText;
+  for( var i = 0; i < dccommentList.length; i++){
+      if(dccommentList[i].classList.contains("extracted")) continue;
+      var origin_text = dccommentList[i].innerText;
+      dccommentList[i].setAttribute('data-origin-text',origin_text);
+      dccommentList[i].setAttribute('data-censored','true');
+      var blind_text="검열된 댓글입니다. by ";
+      var censor = false;
+      var prediction = data[i].labelPrediction;
+      for(var j = 0; j < 6; j++){
+        if(option[prediction[j].label]){
+          console.log(prediction[j].score+ " "+ option["intensity"]/100)
+          if(prediction[j].score>option["intensity"]/100){
+            blind_text+=prediction[j].label+" ";
+            censor=true;
+          }
+        }
+      }
+      //console.log(data[json_idx].labelPrediction);
+      
+      if(censor){
         dccommentList[i].setAttribute('data-origin-text',origin_text);
         dccommentList[i].setAttribute('data-censored','true');
-        dccommentList[i].innerText = "검열된 댓글입니다"
-        console.log(data[json_idx].labelPrediction);
-        json_idx++;
-        dccommentList[i].classList.add("extracted");
+        dccommentList[i].innerText = blind_text;
         dccommentList[i].addEventListener("click", (e) => {
           if(e.target.getAttribute('data-censored')==='true'){
+            e.target.setAttribute('data-censored',e.target.innerText);
             e.target.innerText = e.target.getAttribute('data-origin-text');
-            e.target.setAttribute('data-censored','false');
           }
           else{
-            e.target.innerText = "검열된 댓글입니다";
+            e.target.innerText = e.target.getAttribute('data-censored');
             e.target.setAttribute('data-censored','true');
-          }
-          
-      });
+          }   
+        });
+      }
+      dccommentList[i].classList.add("extracted");
     }
 }
 comment_extract();
