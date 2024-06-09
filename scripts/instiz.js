@@ -8,6 +8,7 @@ function comment_extract(){
     var instizcommentList = document.getElementsByClassName('comment_line');
     for( var i = 0; i < instizcommentList.length; i++){
         if(instizcommentList[i].classList.contains("extracted")) continue;
+        if(instizcommentList[i].getAttribute('idx')!==null) continue;
         instizcommentList[i].setAttribute('idx',idx);
         var commentString = instizcommentList[i].firstElementChild.innerText;
 
@@ -72,13 +73,11 @@ function send_message(){
     .then((response) => response.json())
     .then((data) => replace(data));
 }
-chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+var stop=false;
     const intervalId = setInterval(() => {
+      if(stop==true) clearInterval(intervalId);
+      console.log('catch');
         commentCount=0;
-        console.log('detect');
         comment_extract();
-        if (commentCount > 0) {
-            clearInterval(intervalId);
-        }
-    }, 1000);
-});
+        stop=true;
+  }, 1000);

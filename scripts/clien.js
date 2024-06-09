@@ -2,7 +2,7 @@ var commentCount = 0;
 var commentList=[];
 var option;
 var idx = 0;
-console.log('hi instiz')
+console.log('hi clien');
 function comment_extract(){
   console.log("hi")
     var cliencommentList = document.getElementsByClassName('comment_view');
@@ -28,14 +28,13 @@ function replace(data){
     for( var i = 0; i < cliencommentList.length; i++){
         if(cliencommentList[i].classList.contains("extracted")) continue;
         if(cliencommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
-        var commentString = cliencommentList[i].innerText;
+        var origin_text = cliencommentList[i].innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
           if(prediction.label=='clean') continue;
           if(option[prediction[j].label]){
-            console.log(prediction[j].score+ " "+ option["intensity"]/100)
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
               censor=true;
@@ -45,7 +44,7 @@ function replace(data){
         if(censor){
           cliencommentList[i].setAttribute('data-origin-text',origin_text);
           cliencommentList[i].setAttribute('data-censored','true');
-          var commentString = cliencommentList[i].innerText = blind_text;
+          cliencommentList[i].innerText = blind_text;
           cliencommentList[i].addEventListener("click", (e) => {
             if(e.target.getAttribute('data-censored')==='true'){
               e.target.setAttribute('data-censored',e.target.innerText);
@@ -72,12 +71,14 @@ function send_message(){
     .then((response) => response.json())
     .then((data) => replace(data));
 }
-chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+var stop=false;
     const intervalId = setInterval(() => {
+      if(stop==true) clearInterval(intervalId);
+      console.log('catch');
         commentCount=0;
         comment_extract();
-        if (commentCount > 0) {
+        if (commentCount == 20) {
             clearInterval(intervalId);
         }
-    }, 1000);
-});
+        stop=true;
+  }, 1000);

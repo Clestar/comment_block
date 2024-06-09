@@ -1,6 +1,8 @@
 var commentCount = 0;
 var commentList=[];
 var option;
+var idx = 0;
+console.log('hi dc');
 function comment_extract(){
     var dccommentList = document.getElementsByClassName('usertxt');
     for( var i = 0; i < dccommentList.length; i++){
@@ -31,7 +33,6 @@ function replace(data){
       for(var j = 0; j < 7; j++){
         if(prediction.label=='clean') continue;
         if(option[prediction[j].label]){
-          console.log(prediction[j].score+ " "+ option["intensity"]/100)
           if(prediction[j].score>option["intensity"]/100){
             blind_text+=prediction[j].label+" ";
             censor=true;
@@ -58,6 +59,7 @@ function replace(data){
 }
 comment_extract();
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+  console.log('start');
   const intervalId = setInterval(() => {
       commentCount=0;
       comment_extract();
