@@ -29,14 +29,14 @@ function replace(data){
     for( var i = 0; i < instizcommentList.length; i++){
         if(instizcommentList[i].classList.contains("extracted")) continue;
         if(instizcommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
-        var origin_text = instizcommentList[i].firstElementChild.innerText;
+        var instizText = instizcommentList[i].firstElementChild;
+        var origin_text = instizText.innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
           if(prediction.label=='clean') continue;
           if(option[prediction[j].label]){
-            console.log(prediction[j].score+ " "+ option["intensity"]/100)
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
               censor=true;
@@ -44,10 +44,10 @@ function replace(data){
           }
         }
         if(censor){
-          instizcommentList[i].setAttribute('data-origin-text',origin_text);
-          instizcommentList[i].setAttribute('data-censored','true');
-          var commentString = instizcommentList[i].firstElementChild.innerText = blind_text;
-          instizcommentList[i].addEventListener("click", (e) => {
+          instizText.setAttribute('data-origin-text',origin_text);
+          instizText.setAttribute('data-censored','true');
+          instizText.innerText = blind_text;
+          instizText.addEventListener("click", (e) => {
             if(e.target.getAttribute('data-censored')==='true'){
               e.target.setAttribute('data-censored',e.target.innerText);
               e.target.innerText = e.target.getAttribute('data-origin-text');
