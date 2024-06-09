@@ -27,7 +27,7 @@ function replace(data){
       var origin_text = dccommentList[i].innerText;
       var blind_text="검열된 댓글입니다. by ";
       var censor = false;
-      var prediction = data[i].labelPrediction;
+      var prediction = data.labelPrediction;
       for(var j = 0; j < 7; j++){
         if(prediction.label=='clean') continue;
         if(option[prediction[j].label]){
@@ -72,7 +72,7 @@ function send_message(){
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
     },
-    body: JSON.stringify(commentList),
+    body: JSON.stringify(comment),
   })
   .then((response) => response.json())
   .then((data) => replace(data));

@@ -18,7 +18,7 @@
         "js": ["scripts/youtube.js"]
       },
       {
-        "matches": ["https://n.news.naver.com/mnews/article/*"],
+        "matches": ["https://n.news.naver.com/*article/*"],
         "js": ["scripts/navernews.js"]
       },
       {
@@ -40,7 +40,7 @@
       "https://apis.naver.com/commentBox/cbox/*",
       "https://gall.dcinside.com/board/comment/",
       "https://www.instiz.net/*/*",
-      "https://theqoo.net/*/*",
+      "https://theqoo.net/*",
       "https://www.clien.net/service/board/*/*"
     ],
     "action": {

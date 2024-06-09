@@ -2,12 +2,14 @@ var commentCount = 0;
 var commentList=[];
 var option;
 var idx = 0;
+var flag = true;
 //ytd-comment-view-model
 //yt-core-attributed-string
 function comment_extract(){
     var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
     for( var i = 0; i < youtubecommentList.length; i++){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
+        if(youtubecommentList[i].getAttribute('idx')!==null) continue;
         youtubecommentList[i].setAttribute('idx',idx);
         var commentString = youtubecommentList[i].querySelector('#content-text').innerText;
         comment={
@@ -18,6 +20,7 @@ function comment_extract(){
         idx++;
         send_message();
     }  
+    flag=true;
 }
 chrome.storage.local.get("option", function(data) {
   option = data.option
@@ -32,7 +35,7 @@ function replace(data){
         var origin_text = youtubeText.innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
-        var prediction = data[i].labelPrediction;
+        var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
           if(prediction.label=='clean') continue;
           if(option[prediction[j].label]){
@@ -63,11 +66,18 @@ function replace(data){
 }
 
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+  var stop=false;
     const intervalId = setInterval(() => {
-      commentCount=0;
-      comment_extract();
-      if (commentCount > 0) {
-          clearInterval(intervalId);
+      if(stop==true) clearInterval(intervalId);
+      if(flag==true){
+        console.log('catch');
+        flag=false;
+        commentCount=0;
+        comment_extract();
+        if (commentCount == 20) {
+            clearInterval(intervalId);
+        }
+        stop=true;
       }
   }, 1000);
 });
@@ -78,7 +88,7 @@ function send_message(){
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
     },
-    body: JSON.stringify(commentList),
+    body: JSON.stringify(comment),
   })
   .then((response) => response.json())
   .then((data) => replace(data));

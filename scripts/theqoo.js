@@ -2,23 +2,26 @@ var commentCount = 0;
 var commentList=[];
 var option;
 var idx = 0;
-console.log('hi instiz')
+var flag=true;
+console.log('hi theqoo');
 function comment_extract(){
-  console.log("hi")
     var theqoocommentList = document.getElementsByClassName('fdb_itm');
     for( var i = 0; i < theqoocommentList.length; i++){
         if(theqoocommentList[i].classList.contains("extracted")) continue;
+        if(theqoocommentList[i].getAttribute('idx')!==null) continue;
         theqoocommentList[i].setAttribute('idx',idx);
         var commentString = theqoocommentList[i].children[1].innerText;
-
+        if(commentString=="") continue;
         comment={
           "id":idx.toString(),
           "text": commentString
         }
         idx++;
         commentCount++;
+        
         send_message();
     }
+    flag=true;
 }
 chrome.storage.local.get("option", function(data) {
   option = data.option
@@ -28,14 +31,14 @@ function replace(data){
     for( var i = 0; i < theqoocommentList.length; i++){
         if(theqoocommentList[i].classList.contains("extracted")) continue;
         if(theqoocommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
-        var commentString = theqoocommentList[i].children[1].innerText;
+        var theqooText = theqoocommentList[i].children[1];
+        var origin_text = theqooText.innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
           if(prediction.label=='clean') continue;
           if(option[prediction[j].label]){
-            console.log(prediction[j].score+ " "+ option["intensity"]/100)
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
               censor=true;
@@ -43,10 +46,10 @@ function replace(data){
           }
         }
         if(censor){
-          theqoocommentList[i].setAttribute('data-origin-text',origin_text);
-          theqoocommentList[i].setAttribute('data-censored','true');
-          var commentString = theqoocommentList[i].children[1].innerText = blind_text;
-          theqoocommentList[i].addEventListener("click", (e) => {
+          theqooText.setAttribute('data-origin-text',origin_text);
+          theqooText.setAttribute('data-censored','true');
+          theqooText.innerText = blind_text;
+          theqooText.addEventListener("click", (e) => {
             if(e.target.getAttribute('data-censored')==='true'){
               e.target.setAttribute('data-censored',e.target.innerText);
               e.target.innerText = e.target.getAttribute('data-origin-text');
@@ -73,11 +76,19 @@ function send_message(){
     .then((data) => replace(data));
 }
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
-    const intervalId = setInterval(() => {
-        commentCount=0;
-        comment_extract();
-        if (commentCount > 0) {
-            clearInterval(intervalId);
+    var stop=false;
+    console.log('work');
+      const intervalId = setInterval(() => {
+        if(stop==true) clearInterval(intervalId);
+        if(flag==true){
+          console.log('catch');
+          flag=false;
+          commentCount=0;
+          comment_extract();
+          if (commentCount == 20) {
+              clearInterval(intervalId);
+          }
+          stop=true;
         }
     }, 1000);
-});
+  });

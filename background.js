@@ -34,6 +34,7 @@ chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
 //https://theqoo.net/modules/board/skins/sketchbook5_ajax/ejs/comment.ejs?version=13
 chrome.webRequest.onCompleted.addListener(sendClien, {urls:["https://www.clien.net/service/board/*/*"]});
 chrome.webRequest.onCompleted.addListener(sendTheqoo, {urls:["https://theqoo.net/*/*"]});
+chrome.webRequest.onCompleted.addListener(sendTheqoo, {urls:["https://theqoo.net/index.php"]});
 chrome.webRequest.onCompleted.addListener(sendInstiz, {urls:["https://www.instiz.net/*/*"]});
 chrome.webRequest.onCompleted.addListener(sendNaver, {urls:["https://apis.naver.com/commentBox/cbox/web_naver_list_*"]});
 chrome.webRequest.onCompleted.addListener(sendDC, {urls:["https://gall.dcinside.com/board/comment/"]});

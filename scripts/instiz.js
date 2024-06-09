@@ -28,7 +28,7 @@ function replace(data){
     for( var i = 0; i < instizcommentList.length; i++){
         if(instizcommentList[i].classList.contains("extracted")) continue;
         if(instizcommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
-        var commentString = instizcommentList[i].firstElementChild.innerText;
+        var origin_text = instizcommentList[i].firstElementChild.innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data.labelPrediction;
@@ -75,6 +75,7 @@ function send_message(){
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
     const intervalId = setInterval(() => {
         commentCount=0;
+        console.log('detect');
         comment_extract();
         if (commentCount > 0) {
             clearInterval(intervalId);
