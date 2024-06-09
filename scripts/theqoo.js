@@ -5,11 +5,11 @@ var idx = 0;
 console.log('hi instiz')
 function comment_extract(){
   console.log("hi")
-    var instizcommentList = document.getElementsByClassName('comment_line');
-    for( var i = 0; i < instizcommentList.length; i++){
-        if(instizcommentList[i].classList.contains("extracted")) continue;
-        instizcommentList[i].setAttribute('idx',idx);
-        var commentString = instizcommentList[i].firstElementChild.innerText;
+    var theqoocommentList = document.getElementsByClassName('fdb_itm');
+    for( var i = 0; i < theqoocommentList.length; i++){
+        if(theqoocommentList[i].classList.contains("extracted")) continue;
+        theqoocommentList[i].setAttribute('idx',idx);
+        var commentString = theqoocommentList[i].children[1].innerText;
 
         comment={
           "id":idx.toString(),
@@ -24,11 +24,11 @@ chrome.storage.local.get("option", function(data) {
   option = data.option
 });
 function replace(data){
-  var instizcommentList = document.getElementsByClassName('comment_line');
-    for( var i = 0; i < instizcommentList.length; i++){
-        if(instizcommentList[i].classList.contains("extracted")) continue;
-        if(instizcommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
-        var commentString = instizcommentList[i].firstElementChild.innerText;
+  var theqoocommentList = document.getElementsByClassName('fdb_itm');
+    for( var i = 0; i < theqoocommentList.length; i++){
+        if(theqoocommentList[i].classList.contains("extracted")) continue;
+        if(theqoocommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
+        var commentString = theqoocommentList[i].children[1].innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data.labelPrediction;
@@ -43,10 +43,10 @@ function replace(data){
           }
         }
         if(censor){
-          instizcommentList[i].setAttribute('data-origin-text',origin_text);
-          instizcommentList[i].setAttribute('data-censored','true');
-          var commentString = instizcommentList[i].firstElementChild.innerText = blind_text;
-          instizcommentList[i].addEventListener("click", (e) => {
+          theqoocommentList[i].setAttribute('data-origin-text',origin_text);
+          theqoocommentList[i].setAttribute('data-censored','true');
+          var commentString = theqoocommentList[i].children[1].innerText = blind_text;
+          theqoocommentList[i].addEventListener("click", (e) => {
             if(e.target.getAttribute('data-censored')==='true'){
               e.target.setAttribute('data-censored',e.target.innerText);
               e.target.innerText = e.target.getAttribute('data-origin-text');
@@ -58,7 +58,7 @@ function replace(data){
             
         });
         }
-        instizcommentList[i].classList.add("extracted");  
+        theqoocommentList[i].classList.add("extracted");  
     }
 }
 function send_message(){

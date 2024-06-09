@@ -1,39 +1,40 @@
 var commentCount = 0;
 var commentList=[];
 var option;
+var idx = 0;
 //ytd-comment-view-model
 //yt-core-attributed-string
-console.log('hi_youtube');
 function comment_extract(){
-  commentList=[];
     var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
     for( var i = 0; i < youtubecommentList.length; i++){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
+        youtubecommentList[i].setAttribute('idx',idx);
         var commentString = youtubecommentList[i].querySelector('#content-text').innerText;
-        commentList.push({
-            "id":commentCount,
-            "text": commentString
-        })
+        comment={
+          "id":idx.toString(),
+          "text": commentString
+        }
         commentCount++;
-    }
-    console.log(commentList);
-    send_message();
+        idx++;
+        send_message();
+    }  
 }
 chrome.storage.local.get("option", function(data) {
   option = data.option
 });
 function replace(data){
   var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
-  console.log(data.length);
-    for( var i = 0; i < data.length; i++){
+    for( var i = 0; i < youtubecommentList.length; i++){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
+        if(youtubecommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
         youtubecommentList[i].classList.add("extracted"); 
         var youtubeText = youtubecommentList[i].querySelector('#content-text');
         var origin_text = youtubeText.innerText;
         var blind_text="검열된 댓글입니다. by ";
         var censor = false;
         var prediction = data[i].labelPrediction;
-        for(var j = 0; j < 6; j++){
+        for(var j = 0; j < 7; j++){
+          if(prediction.label=='clean') continue;
           if(option[prediction[j].label]){
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
@@ -46,7 +47,6 @@ function replace(data){
           youtubeText.setAttribute('data-origin-text',origin_text);
           youtubeText.setAttribute('data-censored','true');
           youtubeText.innerText = blind_text
-          //console.log(data[json_idx].labelPrediction);
           youtubeText.addEventListener("click", (e) => {
             if(e.target.getAttribute('data-censored')==='true'){
               e.target.setAttribute('data-censored',e.target.innerText);
@@ -58,18 +58,18 @@ function replace(data){
             }
           });
         }
-        
+        youtubecommentList[i].classList.add("extracted"); 
     }
 }
 
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
     const intervalId = setInterval(() => {
-        commentCount=0;
-        comment_extract();
-        if (commentCount > 0) {
-            clearInterval(intervalId);
-        }
-    }, 1000);
+      commentCount=0;
+      comment_extract();
+      if (commentCount > 0) {
+          clearInterval(intervalId);
+      }
+  }, 1000);
 });
 
 function send_message(){

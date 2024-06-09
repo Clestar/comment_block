@@ -2,27 +2,19 @@ var commentCount = 0;
 var commentList=[];
 var option;
 function comment_extract(){
-  commentList=[];
     var dccommentList = document.getElementsByClassName('usertxt');
     for( var i = 0; i < dccommentList.length; i++){
         if(dccommentList[i].classList.contains("extracted")) continue;
+        dccommentList[i].setAttribute('idx',idx);
         var commentString = dccommentList[i].innerText;
-        commentList.push({
-            "id":commentCount,
-            "text": commentString
-        })
-        commentCount++;
-        /*
-        if(commentCount==20){
-          console.log(commentList);
-          send_message();
-          commentCount=0;
-          commentList=[];
+        comment={
+          "id":idx.toString(),
+          "text": commentString
         }
-        */
+        idx++;
+        commentCount++;
+        send_message();
     }
-    console.log(commentList);
-    send_message();
 }
 chrome.storage.local.get("option", function(data) {
   option = data.option
@@ -31,13 +23,13 @@ function replace(data){
   var dccommentList = document.getElementsByClassName('usertxt');
   for( var i = 0; i < dccommentList.length; i++){
       if(dccommentList[i].classList.contains("extracted")) continue;
+      if(dccommentList[i].getAttribute('idx')!=parseInt(data.id)) continue;
       var origin_text = dccommentList[i].innerText;
-      dccommentList[i].setAttribute('data-origin-text',origin_text);
-      dccommentList[i].setAttribute('data-censored','true');
       var blind_text="검열된 댓글입니다. by ";
       var censor = false;
       var prediction = data[i].labelPrediction;
-      for(var j = 0; j < 6; j++){
+      for(var j = 0; j < 7; j++){
+        if(prediction.label=='clean') continue;
         if(option[prediction[j].label]){
           console.log(prediction[j].score+ " "+ option["intensity"]/100)
           if(prediction[j].score>option["intensity"]/100){
@@ -46,8 +38,6 @@ function replace(data){
           }
         }
       }
-      //console.log(data[json_idx].labelPrediction);
-      
       if(censor){
         dccommentList[i].setAttribute('data-origin-text',origin_text);
         dccommentList[i].setAttribute('data-censored','true');

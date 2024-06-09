@@ -24,13 +24,24 @@
       {
         "matches": ["https://www.instiz.net/*/*"],
         "js": ["scripts/instiz.js"]
+      },
+      {
+        "matches": ["https://theqoo.net/*/*"],
+        "js": ["scripts/theqoo.js"]
+      },
+      {
+        "matches": ["https://www.clien.net/service/board/*/*"],
+        "js": ["scripts/clien.js"]
       }
     ],
     "host_permissions":[
       "https://*.youtube.com/*",
       "https://n.news.naver.com/mnews/article/*",
       "https://apis.naver.com/commentBox/cbox/*",
-      "https://gall.dcinside.com/board/comment/"
+      "https://gall.dcinside.com/board/comment/",
+      "https://www.instiz.net/*/*",
+      "https://theqoo.net/*/*",
+      "https://www.clien.net/service/board/*/*"
     ],
     "action": {
       "default_popup": "popup.html",
