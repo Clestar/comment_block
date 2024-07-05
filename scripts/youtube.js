@@ -6,6 +6,7 @@ var flag = true;
 //ytd-comment-view-model
 //yt-core-attributed-string
 function comment_extract(){
+  commentCount=0;
     var youtubecommentList = document.getElementsByTagName('ytd-comment-view-model');
     for( var i = 0; i < youtubecommentList.length; i++){
         if(youtubecommentList[i].classList.contains("extracted")) continue;
@@ -37,7 +38,12 @@ function replace(data){
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
-          if(prediction.label=='clean') continue;
+          if(prediction[j].label=='clean') {
+            if(prediction[j].score>0.9){
+              censor=false;
+              break;
+            }
+          }
           if(option[prediction[j].label]){
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
@@ -67,19 +73,21 @@ function replace(data){
 
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
   var stop=false;
+  if(option["on"]==true){
+    var timer =0;
     const intervalId = setInterval(() => {
       if(stop==true) clearInterval(intervalId);
       if(flag==true){
-        console.log('catch');
         flag=false;
-        commentCount=0;
         comment_extract();
         if (commentCount == 20) {
             clearInterval(intervalId);
         }
-        stop=true;
+        timer++;
+        if(timer == 5) stop=true;
       }
   }, 1000);
+  }
 });
 
 function send_message(){

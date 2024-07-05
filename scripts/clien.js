@@ -33,7 +33,12 @@ function replace(data){
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
-          if(prediction.label=='clean') continue;
+          if(prediction[j].label=='clean') {
+            if(prediction[j].score>0.9){
+              censor=false;
+              break;
+            }
+          }
           if(option[prediction[j].label]){
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
@@ -72,13 +77,24 @@ function send_message(){
     .then((data) => replace(data));
 }
 var stop=false;
+var timer = 0;
+if(option==null){
+  const intervaloption = setInterval(() => {
+    if(option!=null) {
+      comment_extract();
+      clearInterval(intervaloption);
+    }
+}, 100);
+}
+else{
+  if(option["on"]==true){
     const intervalId = setInterval(() => {
       if(stop==true) clearInterval(intervalId);
-      console.log('catch');
-        commentCount=0;
-        comment_extract();
-        if (commentCount == 20) {
-            clearInterval(intervalId);
-        }
-        stop=true;
+      commentCount=0;
+      comment_extract();
+      timer++;
+      if(timer==5) stop=true;
   }, 1000);
+  }
+}
+    

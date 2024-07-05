@@ -1,6 +1,6 @@
 var commentCount = 0;
 var commentList=[];
-var option;
+var option = null;
 var idx = 0;
 console.log('hi dc');
 function comment_extract(){
@@ -31,7 +31,12 @@ function replace(data){
       var censor = false;
       var prediction = data.labelPrediction;
       for(var j = 0; j < 7; j++){
-        if(prediction.label=='clean') continue;
+        if(prediction[j].label=='clean') {
+          if(prediction[j].score>0.9){
+            censor=false;
+            break;
+          }
+        }
         if(option[prediction[j].label]){
           if(prediction[j].score>option["intensity"]/100){
             blind_text+=prediction[j].label+" ";
@@ -57,16 +62,36 @@ function replace(data){
       dccommentList[i].classList.add("extracted");
     }
 }
-comment_extract();
-chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
-  console.log('start');
-  const intervalId = setInterval(() => {
+if(option==null){
+  const intervaloption = setInterval(() => {
+    if(option!=null) {
+      comment_extract();
+      clearInterval(intervaloption);
+    }
+}, 100);
+}
+else{
+  if(option["on"]==true){
+    const intervalId = setInterval(() => {
       commentCount=0;
       comment_extract();
       if (commentCount > 0) {
           clearInterval(intervalId);
       }
   }, 1000);
+  }
+}
+chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+  console.log('start');
+  if(option["on"]==true){
+    const intervalId = setInterval(() => {
+      commentCount=0;
+      comment_extract();
+      if (commentCount > 0) {
+          clearInterval(intervalId);
+      }
+  }, 1000);
+  }
 });
 function send_message(){
   fetch('https://project-march.inha.me/api/blind', {

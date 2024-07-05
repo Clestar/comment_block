@@ -5,6 +5,7 @@ var idx = 0;
 var flag=true;
 console.log('hi theqoo');
 function comment_extract(){
+  commentCount=0;
     var theqoocommentList = document.getElementsByClassName('fdb_itm');
     for( var i = 0; i < theqoocommentList.length; i++){
         if(theqoocommentList[i].classList.contains("extracted")) continue;
@@ -37,7 +38,12 @@ function replace(data){
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
-          if(prediction.label=='clean') continue;
+          if(prediction[j].label=='clean') {
+            if(prediction[j].score>0.9){
+              censor=false;
+              break;
+            }
+          }
           if(option[prediction[j].label]){
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
@@ -76,19 +82,20 @@ function send_message(){
     .then((data) => replace(data));
 }
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
-    var stop=false;
-    console.log('work');
-      const intervalId = setInterval(() => {
-        if(stop==true) clearInterval(intervalId);
-        if(flag==true){
-          console.log('catch');
-          flag=false;
-          commentCount=0;
-          comment_extract();
-          if (commentCount == 20) {
-              clearInterval(intervalId);
-          }
-          stop=true;
+  var stop=false;
+  if(option["on"]==true){
+    var timer =0;
+    const intervalId = setInterval(() => {
+      if(stop==true) clearInterval(intervalId);
+      if(flag==true){
+        flag=false;
+        comment_extract();
+        if (commentCount == 100) {
+            clearInterval(intervalId);
         }
-    }, 1000);
+        timer++;
+        if(timer == 5) stop=true;
+      }
+  }, 1000);
+  }
   });

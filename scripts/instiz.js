@@ -2,11 +2,15 @@ var commentCount = 0;
 var commentList=[];
 var option;
 var idx = 0;
+var sum =0;
 console.log('hi instiz')
 function comment_extract(){
+  
   console.log("hi")
+  
     var instizcommentList = document.getElementsByClassName('comment_line');
     for( var i = 0; i < instizcommentList.length; i++){
+        
         if(instizcommentList[i].classList.contains("extracted")) continue;
         if(instizcommentList[i].getAttribute('idx')!==null) continue;
         instizcommentList[i].setAttribute('idx',idx);
@@ -35,7 +39,12 @@ function replace(data){
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
-          if(prediction.label=='clean') continue;
+          if(prediction[j].label=='clean') {
+            if(prediction[j].score>0.9){
+              censor=false;
+              break;
+            }
+          }
           if(option[prediction[j].label]){
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
@@ -74,10 +83,24 @@ function send_message(){
     .then((data) => replace(data));
 }
 var stop=false;
+
+if(option==null){
+  const intervaloption = setInterval(() => {
+    if(option!=null) {
+      comment_extract();
+      clearInterval(intervaloption);
+    }
+}, 100);
+}
+else{
+  if(option["on"]==true){
     const intervalId = setInterval(() => {
-      if(stop==true) clearInterval(intervalId);
-      console.log('catch');
-        commentCount=0;
-        comment_extract();
-        stop=true;
+      commentCount=0;
+      comment_extract();
+      if (commentCount > 0) {
+          clearInterval(intervalId);
+      }
   }, 1000);
+  }
+}
+    

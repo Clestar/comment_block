@@ -3,7 +3,6 @@ var commentList=[];
 var option;
 var idx = 0;
 function comment_extract(){
-  console.log("hi")
     var navercommentList = document.getElementsByClassName('u_cbox_contents');
     for( var i = 0; i < navercommentList.length; i++){
         if(navercommentList[i].classList.contains("extracted")) continue;
@@ -32,9 +31,13 @@ function replace(data){
         var censor = false;
         var prediction = data.labelPrediction;
         for(var j = 0; j < 7; j++){
-          if(prediction.label=='clean') continue;
+          if(prediction[j].label=='clean') {
+            if(prediction[j].score>0.9){
+              censor=false;
+              break;
+            }
+          }
           if(option[prediction[j].label]){
-            console.log(prediction[j].score+ " "+ option["intensity"]/100)
             if(prediction[j].score>option["intensity"]/100){
               blind_text+=prediction[j].label+" ";
               censor=true;
@@ -72,11 +75,16 @@ function send_message(){
     .then((data) => replace(data));
 }
 chrome.runtime.onMessage.addListener((message,sender,sendResponse)=>{
+  if(option["on"]==true){
+    var timer = 0;
     const intervalId = setInterval(() => {
-        commentCount=0;
-        comment_extract();
-        if (commentCount > 0) {
-            clearInterval(intervalId);
-        }
-    }, 1000);
+      commentCount=0;
+      comment_extract();
+      if (commentCount == 20) {
+          clearInterval(intervalId);
+      }
+      timer++;
+      if(timer == 5 )stop=true;
+  }, 1000);
+  }
 });
